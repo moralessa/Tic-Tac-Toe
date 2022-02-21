@@ -1,0 +1,144 @@
+*, *::after, *::before {
+  -webkit-box-sizing: border-box;
+          box-sizing: border-box;
+}
+
+html body {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+  width: 100%;
+}
+
+body {
+  font-family: 'Bangers', 'Courier New', Courier, monospace;
+  font-size: 25px;
+  background-color: #202020;
+  background-image: url("https://www.transparenttextures.com/patterns/bright-squares.png");
+  color: white;
+}
+
+.homeScreen {
+  text-align: center;
+}
+
+.homeScreen .title {
+  margin-top: 2rem;
+}
+
+.homeScreen .title h1 {
+  font-size: 4.5rem;
+  -webkit-transition: all 1s ease-in-out;
+  transition: all 1s ease-in-out;
+}
+
+.homeScreen .title h1:hover {
+  cursor: pointer;
+  color: #80ca80;
+  letter-spacing: .8rem;
+}
+
+@-webkit-keyframes playerAnimate {
+  0% {
+    -webkit-transform: scale(0);
+            transform: scale(0);
+  }
+  100% {
+    -webkit-transform: scale(1);
+            transform: scale(1);
+  }
+}
+
+@keyframes playerAnimate {
+  0% {
+    -webkit-transform: scale(0);
+            transform: scale(0);
+  }
+  100% {
+    -webkit-transform: scale(1);
+            transform: scale(1);
+  }
+}
+
+@-webkit-keyframes vsAnimate {
+  0% {
+    -webkit-transform: scale(0);
+            transform: scale(0);
+  }
+  45% {
+    -webkit-transform: scale(0);
+            transform: scale(0);
+  }
+  100% {
+    -webkit-transform: scale(1);
+            transform: scale(1);
+  }
+}
+
+@keyframes vsAnimate {
+  0% {
+    -webkit-transform: scale(0);
+            transform: scale(0);
+  }
+  45% {
+    -webkit-transform: scale(0);
+            transform: scale(0);
+  }
+  100% {
+    -webkit-transform: scale(1);
+            transform: scale(1);
+  }
+}
+
+.homeScreen .playerSelection .playerContainer {
+  padding: 1rem 0 11rem 0;
+  border-radius: 15px;
+  background-color: black;
+  -webkit-box-shadow: 0px 0px 5px #80ca80;
+          box-shadow: 0px 0px 5px #80ca80;
+  -webkit-animation: playerAnimate 1.5s 1 ease-out;
+          animation: playerAnimate 1.5s 1 ease-out;
+}
+
+.homeScreen .playerSelection .playerContainer .foot {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-pack: space-evenly;
+      -ms-flex-pack: space-evenly;
+          justify-content: space-evenly;
+}
+
+.homeScreen .playerSelection .playerContainer .foot p {
+  -webkit-transition: all 500ms ease-in-out;
+  transition: all 500ms ease-in-out;
+}
+
+.homeScreen .playerSelection .playerContainer .foot p:hover {
+  color: #80ca80;
+  cursor: pointer;
+  -webkit-transform: scale(1.3);
+          transform: scale(1.3);
+}
+
+.homeScreen .playerSelection .vs {
+  font-size: 4rem;
+  height: inherit;
+  display: -ms-grid;
+  display: grid;
+  place-items: center;
+  -webkit-animation: vsAnimate 1.5s 1 ease-in;
+          animation: vsAnimate 1.5s 1 ease-in;
+}
+
+.homeScreen .playerSelection h2 {
+  font-size: 3rem;
+  -webkit-transition: all 1s ease-in-out;
+  transition: all 1s ease-in-out;
+}
+
+.homeScreen .playerSelection h2:hover {
+  color: #80ca80;
+  cursor: pointer;
+}
+/*# sourceMappingURL=styles.css.map */

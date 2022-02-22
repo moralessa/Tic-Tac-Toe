@@ -18,6 +18,28 @@ body {
   color: white;
 }
 
+.footer {
+  font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+}
+
+.footer a {
+  margin-top: 8rem;
+  position: absolute;
+  left: 50%;
+  -webkit-transform: translate(-50%);
+          transform: translate(-50%);
+  color: #80ca80;
+  text-decoration: none;
+}
+
+.footer a:hover {
+  text-decoration: underline;
+}
+
+.footer a i {
+  margin-right: 5px;
+}
+
 .homeScreen {
   text-align: center;
 }
@@ -114,6 +136,12 @@ body {
   transition: all 500ms ease-in-out;
 }
 
+.homeScreen .playerSelection .playerContainer .foot p.selected {
+  color: #80ca80;
+  -webkit-transform: scale(1.3);
+          transform: scale(1.3);
+}
+
 .homeScreen .playerSelection .playerContainer .foot p:hover {
   color: #80ca80;
   cursor: pointer;
@@ -127,8 +155,34 @@ body {
   display: -ms-grid;
   display: grid;
   place-items: center;
-  -webkit-animation: vsAnimate 1.5s 1 ease-in;
-          animation: vsAnimate 1.5s 1 ease-in;
+  -webkit-animation: vsAnimate 2s 1 ease-in;
+          animation: vsAnimate 2s 1 ease-in;
+}
+
+.homeScreen .playerSelection .vs span {
+  margin: 1rem;
+  -webkit-transform: scale(0);
+          transform: scale(0);
+}
+
+.homeScreen .playerSelection .vs span.animate {
+  -webkit-animation: playerAnimate 1.5s 1 ease-in-out;
+          animation: playerAnimate 1.5s 1 ease-in-out;
+  -webkit-animation-fill-mode: forwards;
+          animation-fill-mode: forwards;
+}
+
+.homeScreen .playerSelection .vs span button {
+  padding: 0 1rem;
+  border-radius: 15px;
+  -webkit-transition: all 500ms ease-in-out;
+  transition: all 500ms ease-in-out;
+}
+
+.homeScreen .playerSelection .vs span button:hover {
+  color: white;
+  background-color: #80ca80;
+  cursor: pointer;
 }
 
 .homeScreen .playerSelection h2 {
@@ -140,5 +194,67 @@ body {
 .homeScreen .playerSelection h2:hover {
   color: #80ca80;
   cursor: pointer;
+}
+
+.loadScreen h1 {
+  font-size: 4.5rem;
+  -webkit-transition: all 1s ease-in-out;
+  transition: all 1s ease-in-out;
+}
+
+.loadScreen .loadTitle {
+  margin-top: 2rem;
+}
+
+.playScreen .return {
+  margin-top: 2rem;
+}
+
+.playScreen .return button {
+  padding: .1rem 1rem;
+  border-radius: 15px;
+  -webkit-transition: all 1s ease-in-out;
+  transition: all 1s ease-in-out;
+}
+
+.playScreen .return button:hover {
+  background-color: #80ca80;
+  color: white;
+}
+
+.playScreen .players {
+  font-size: 2.5rem;
+}
+
+.playScreen .players .player {
+  -webkit-transition: all 1s ease-in-out;
+  transition: all 1s ease-in-out;
+}
+
+.playScreen .players .player.focus {
+  color: #80ca80;
+  -webkit-transform: scale(1.5);
+          transform: scale(1.5);
+}
+
+.playScreen .gameBoard {
+  position: absolute;
+  left: 50%;
+  -webkit-transform: translate(-50%);
+          transform: translate(-50%);
+  display: -ms-grid;
+  display: grid;
+  -ms-grid-columns: (110px)[3];
+      grid-template-columns: repeat(3, 110px);
+  -ms-grid-rows: (110px)[3];
+      grid-template-rows: repeat(3, 110px);
+  gap: 15px;
+}
+
+.playScreen .gameBoard .space {
+  background-color: white;
+  width: 110px;
+  height: 110px;
+  border-radius: 15px;
 }
 /*# sourceMappingURL=styles.css.map */

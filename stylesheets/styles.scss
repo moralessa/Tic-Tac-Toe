@@ -222,6 +222,7 @@ body{
             display: grid;
             place-items: center;
             font-size: 4rem;
+            transition: all 500ms ease-in;
 
             &:hover{
                 background-color:rgba(128, 202, 128, 0.411);

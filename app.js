@@ -231,20 +231,26 @@ const gameplay = (() =>{
                      ' ', ' ', ' '];
     let boardCount = 0;
     const spaces = document.querySelectorAll('.space');
-    const spacesArr = Array.from(spaces);
-    let boardBool = false;
-
     startGame.addEventListener('click', () =>{
         players = selection.getPlayers();
         populateDisplay();
         displayOne.classList.add('focus');
-        gameStart();
+        if(players[0].getDifficulty() > 0){
+            setTimeout(() =>{
+                gameStart();
+            }, 14000)
+        }else{
+            gameStart();
+        }
     })
 
     ret.addEventListener('click', function(){
         location.reload()
     });
 
+    const getCount = () =>{
+        return boardCount;
+    }
 
     const getBoard = () =>{
         return gameBoard;
@@ -254,12 +260,37 @@ const gameplay = (() =>{
         return players;
     }
 
+    function roundTie(){
+        spaces.forEach(space =>{
+            space.style.color = 'white';
+            space.style.backgroundColor = 'beige';
+            displayTwo.classList.remove('focus');
+            displayOne.classList.remove('focus');
+        })
+
+        setTimeout(() =>{
+            for(let i = 0; i < gameBoard.length; i++){
+                gameBoard[i] = ' ';
+                spaces.forEach(space => {
+                    space.textContent = "";
+                    space.style.color = 'black';
+                    space.style.backgroundColor = 'white';
+                });
+            }  
+            displayOne.classList.add('focus');
+            boardCount = 0;
+            gameStart(); 
+        }, 5000)
+    }
+
     function boardIncrement(){
         boardCount++;
-        if(boardCount >= 9){
-            boardBool = true;
+        if(getCount() >= 9){
+            roundTie();
         }else{
-            gameStart();
+            setTimeout(() =>{
+                gameStart();
+            }, 2000)
         }
     }
 
@@ -320,8 +351,6 @@ const gameplay = (() =>{
                     boardIncrement();
                 }else if(gameBoard[0] != ' '){
                     console.log('spots taken');
-                }else{
-                    return;
                 }
                 break;
             case 's1':
@@ -339,8 +368,6 @@ const gameplay = (() =>{
                     boardIncrement();
                 }else if(gameBoard[1] != ' '){
                     console.log('spots taken');
-                }else{
-                    return;
                 }
                 break;
             case 's2':
@@ -358,8 +385,6 @@ const gameplay = (() =>{
                     boardIncrement();
                 }else if(gameBoard[2] != ' '){
                     console.log('spots taken');
-                }else{
-                    return;
                 }
                 break;
             case 's3':
@@ -377,8 +402,6 @@ const gameplay = (() =>{
                     boardIncrement();
                 }else if(gameBoard[3] != ' '){
                     console.log('spots taken');
-                }else{
-                    return;
                 }
                 break;
             case 's4':
@@ -396,8 +419,6 @@ const gameplay = (() =>{
                     boardIncrement();
                 }else if(gameBoard[4] != ' '){
                     console.log('spots taken');
-                }else{
-                    return;
                 }
                 break;
             case 's5':
@@ -434,8 +455,6 @@ const gameplay = (() =>{
                     boardIncrement();
                 }else if(gameBoard[6] != ' '){
                     console.log('spots taken');
-                }else{
-                    return;
                 }
                 break;
             case 's7':
@@ -453,8 +472,6 @@ const gameplay = (() =>{
                     boardIncrement();
                 }else if(gameBoard[7] != ' '){
                     console.log('spots taken');
-                }else{
-                    return;
                 }
                 break;
             case 's8':
@@ -472,24 +489,32 @@ const gameplay = (() =>{
                     boardIncrement();
                 }else if(gameBoard[8] != ' '){
                     console.log('spots taken');
-                }else{
-                    return;
                 }
-                break;
         }
     }
     
     function botEasy(sign){
         let index = Math.floor(Math.random() * 9);
-        console.log(index);
-        // if(){
-
-        // }else{
-        //     switch(sign){
-        //         case 'X':
-                    
-        //     }
-        // }
+        while(gameBoard[index] != ' '){
+            index = Math.floor(Math.random() * 9);
+            console.log(index);
+        }        
+            switch(sign){
+                case 'X':
+                    document.getElementById(`s${index}`).textContent = 'X';
+                    gameBoard[index] = 'X';
+                    displayOne.classList.remove('focus');
+                    displayTwo.classList.add('focus');
+                    boardIncrement();
+                    break;
+                case 'O':
+                    document.getElementById(`s${index}`).textContent = 'O';
+                    gameBoard[index] = 'O';
+                    displayTwo.classList.remove('focus');
+                    displayOne.classList.add('focus');
+                    boardIncrement();
+            }
+        
     }
 
     function botMove(sign){
@@ -505,8 +530,6 @@ const gameplay = (() =>{
                 if(players[0].getDifficulty() == 3){
                     botImpossible('X');
                 }
-                displayOne.classList.remove('focus');
-                displayTwo.classList.add('focus');
                 break;
             case 'O':
                 console.log('Bot O move');
@@ -519,14 +542,11 @@ const gameplay = (() =>{
                 if(players[1].getDifficulty() == 3){
                     botImpossible('O');
                 }
-                displayTwo.classList.remove('focus');
-                displayOne.classList.add('focus');
         }
 
     }
 
     function gameStart(){
-        console.log('gamestart');
                 if(players[0].getDifficulty() > 0 && displayOne.classList.contains('focus')){
                     botMove('X');
                 }
@@ -536,5 +556,5 @@ const gameplay = (() =>{
     }
 
     
-        return { getBoard, getPlayers};
+        return { getBoard, getPlayers, getCount};
 })();

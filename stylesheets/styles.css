@@ -1,3 +1,7 @@
+:root {
+  --animate-delay: 500ms;
+}
+
 *, *::after, *::before {
   -webkit-box-sizing: border-box;
           box-sizing: border-box;
@@ -206,6 +210,11 @@ body {
   margin-top: 2rem;
 }
 
+.loadScreen #count {
+  -webkit-transition: all 1s ease-in-out;
+  transition: all 1s ease-in-out;
+}
+
 .playScreen .return {
   margin-top: 2rem;
 }
@@ -256,5 +265,17 @@ body {
   width: 110px;
   height: 110px;
   border-radius: 15px;
+  color: black;
+  -webkit-transition: all 500ms ease-in-out;
+  transition: all 500ms ease-in-out;
+  display: -ms-grid;
+  display: grid;
+  place-items: center;
+  font-size: 4rem;
+}
+
+.playScreen .gameBoard .space:hover {
+  background-color: rgba(128, 202, 128, 0.411);
+  cursor: pointer;
 }
 /*# sourceMappingURL=styles.css.map */

@@ -74,23 +74,28 @@
                     </h1>
                 </div>
             </div>
-            <div class="playScreen  animate__animated animate__slow">
+            <div class="playScreen d-none animate__animated animate__slow">
                 <div class="return text-start">
                     <button>Return</button>
                 </div>
-                <br><br>
+                <br>
                 <div class="players row text-center">
                     <div class="player col-sm-6" id="playerOne">
                         
-                        <span class="winner"></span>
                     </div>
                     <br>
                     <div class="player col-sm-6 " id="playerTwo">
                         
-                        <span class="winner"></span>
                     </div>
                 </div>
+                <div class="playerWins row text-center">
+                    <div id="firstPlayerWins" class="col-sm-6">0</div>
+                    <div id="secondPlayerWins" class="col-sm-6">0</div>
+                </div>
                 <br><br>
+                <h3 id="status" class="text-center"></h3>
+                <h3 id="roundCount" class="text-center">0</h3>
+                <br>
                 <div class="gameBoard ">
                     <div class="space" id="s0"></div>
                     <div class="space" id="s1"></div>
@@ -102,6 +107,8 @@
                     <div class="space" id="s7"></div>
                     <div class="space" id="s8"></div>
                 </div>
+                <br><br>
+                <button id="again"><h3>Play Again?</h3></button>
             </div>
         </div>
     </main>

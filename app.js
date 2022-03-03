@@ -1,6 +1,5 @@
 "use strict"
-
-const Player = (difficulty, sign)=>{
+const Player = (difficulty, sign)=>{ //Player Factory Function
     const sign_ = sign;
     const difficulty_ = difficulty;
   
@@ -15,8 +14,7 @@ const Player = (difficulty, sign)=>{
     return{getSign, getDifficulty};
 }
 
-
-const selection = (() =>{
+const selection = (() =>{ //Selection functionality 
     const playerX = document.getElementById('p1');
     const botX = document.getElementById('bot1');
     const playerO = document.getElementById('p2');
@@ -36,7 +34,7 @@ const selection = (() =>{
         return [playerOne, playerTwo];
     }
 
-    startGame.addEventListener('click', function(){
+    startGame.addEventListener('click', function(){ //Event listener that triggers animations
         createPlayers(playersChosen.xSelection);
         createPlayers(playersChosen.oSelection);
         populateDisplay();
@@ -74,7 +72,7 @@ const selection = (() =>{
     })
 
 
-    const populateDisplay = () =>{
+    const populateDisplay = () =>{ // Populate display for header of gameplay screen
         switch(playerOne.getDifficulty()){
             case 0 :
                 firstSelection.textContent = 'Player One';
@@ -104,7 +102,7 @@ const selection = (() =>{
         }
     }
 
-    function createPlayers(selection){
+    function createPlayers(selection){ // conditional statements to create games players
         switch(selection.id){
             case 'p1':
                 playerOne = Player(0, 'X');
@@ -136,26 +134,25 @@ const selection = (() =>{
         }
     }
 
-    function checkStatus(){
+    function checkStatus(){ // Function to check if players are selected to trigger start button animation
         if(playersChosen.xSelection != undefined && playersChosen.oSelection != undefined){
             startGame.classList.add('animate');
         }
        }
 
-    const toggleDifficulty = (bot) =>{
-
+    const toggleDifficulty = (bot) =>{ // conditionals for display of cpu difficulty selection
        switch(bot.textContent){
            case 'CPU':
                 bot.textContent = 'Easy';
                 break;
-            case 'Easy':
-                bot.textContent = 'Hard';
-                break;
-            case 'Hard':
-                bot.textContent = 'Impossible';
-                break;
-            case 'Impossible':
-                bot.textContent = 'Easy';
+            // case 'Easy':
+            //     bot.textContent = 'Hard';
+            //     break;
+            // case 'Hard':
+            //     bot.textContent = 'Impossible';
+            //     break;
+            // case 'Impossible':
+            //     bot.textContent = 'Easy';
        }
     }
 
@@ -222,75 +219,189 @@ const selection = (() =>{
 
 const gameplay = (() =>{
     const startGame = document.getElementById('start');
+    let restartButton = document.getElementById('again');
     let displayOne = document.getElementById('playerOne');
     let displayTwo = document.getElementById('playerTwo');
+    let pOneWinsDisplay = document.getElementById('firstPlayerWins');
+    let pTwoWinsDisplay = document.getElementById('secondPlayerWins');
+    let roundCountDisplay = document.getElementById('roundCount');
+    let statusDisplay = document.getElementById('status')
     const ret = document.querySelector('.return');
     let players = undefined;
     let gameBoard = [' ', ' ', ' ',
                      ' ', ' ', ' ',
                      ' ', ' ', ' '];
     let boardCount = 0;
+    let pOneWins = 0;
+    let pTwoWins = 0;
+    let roundCount = 0;
     const spaces = document.querySelectorAll('.space');
-    startGame.addEventListener('click', () =>{
-        players = selection.getPlayers();
-        populateDisplay();
-        displayOne.classList.add('focus');
-        if(players[0].getDifficulty() > 0){
-            setTimeout(() =>{
-                gameStart();
-            }, 14000)
-        }else{
-            gameStart();
+    const getCount = () =>{ return boardCount;}
+    const getBoard = () =>{return gameBoard;}
+    const getPlayers = () =>{return players;}
+    const getWins = ()=>{return [pOneWins, pTwoWins];}
+    const getRoundCount = ()=>{return roundCount;}
+
+    window.addEventListener('click', function (e){
+        if(e.target.classList.contains('space')){
+            playerMove(e);
+        }else {
+            return;
         }
     })
 
-    ret.addEventListener('click', function(){
+    startGame.addEventListener('click', () =>{ // event listener that triggers the game start 
+        players = selection.getPlayers();
+        populateDisplay();
+        displayOne.classList.add('focus');
+        setTimeout(() =>{
+            gameStart();
+        }, 14000)
+    })
+
+    ret.addEventListener('click', function(){ // event listener to take users back to homepage
         location.reload()
     });
 
-    const getCount = () =>{
-        return boardCount;
+    restartButton.addEventListener('click', function(){
+        console.log('clearing data')
+        for(let i = 0; i < gameBoard.length; i++){
+            gameBoard[i] = ' ';
+        } 
+        spaces.forEach(space => {
+            space.textContent = "";
+            space.style.color = 'black';
+            space.style.backgroundColor = 'white';
+        });
+        pOneWins = 0;
+        pTwoWins = 0;
+        boardCount = 0;
+        roundCount = 0;
+        pOneWinsDisplay.textContent = getWins()[0];
+        pTwoWinsDisplay.textContent = getWins()[1];
+        roundCountDisplay.textContent = getRoundCount();
+        displayOne.classList.remove('unfocus');
+        displayTwo.classList.remove('unfocus');
+        displayOne.classList.add('focus');
+        statusDisplay.textContent = '';
+        restartButton.style.opacity = '0';
+        populateDisplay();
+        gameStart();
+    })
+
+    function reset(){
+        if(getWins()[0] > 2 || getWins()[1] > 2 || getRoundCount() > 5){
+            console.log('end of game')
+            endGame();
+            return;
+        }
+        roundCountDisplay.textContent = `${getRoundCount()}`;
+        setTimeout(() =>{
+            for(let i = 0; i < gameBoard.length; i++){
+                gameBoard[i] = ' ';
+            }  
+
+            spaces.forEach(space => {
+                space.textContent = "";
+                space.style.color = 'black';
+                space.style.backgroundColor = 'white';
+            });
+
+            displayOne.classList.add('focus');
+            boardCount = 0;
+            statusDisplay.textContent = '';
+            gameStart(); 
+        }, 3000)
     }
 
-    const getBoard = () =>{
-        return gameBoard;
-    }
-
-    const getPlayers = () =>{
-        return players;
-    }
-
-    function roundTie(){
+    function roundTie(){ // function that animates a tie case and resets the game
+        roundCount++;
+        statusDisplay.textContent = 'Game Tied';
         spaces.forEach(space =>{
             space.style.color = 'white';
             space.style.backgroundColor = 'beige';
             displayTwo.classList.remove('focus');
             displayOne.classList.remove('focus');
         })
+        reset();
+    }
 
-        setTimeout(() =>{
-            for(let i = 0; i < gameBoard.length; i++){
-                gameBoard[i] = ' ';
-                spaces.forEach(space => {
-                    space.textContent = "";
-                    space.style.color = 'black';
-                    space.style.backgroundColor = 'white';
-                });
-            }  
-            displayOne.classList.add('focus');
-            boardCount = 0;
-            gameStart(); 
-        }, 5000)
+    function winRoundAnimate(indexOne, indexTwo, indexThree){ //function that animates a win case and resets the game
+        let animations = [];
+        animations.push(document.getElementById(`s${indexOne}`));
+        animations.push(document.getElementById(`s${indexTwo}`));
+        animations.push(document.getElementById(`s${indexThree}`));
+
+        animations.forEach(animate =>{
+            animate.style.color = 'white';
+            animate.style.backgroundColor = 'rgb(128, 202, 128)';
+            displayTwo.classList.remove('focus');
+            displayOne.classList.remove('focus');
+        })
+        reset();
+    }
+
+    function checkWinner(){ // function to check if their is a winner
+        let possibleWins = {
+            firstColumn: [0,3,6],
+            secondColumn: [1,4,7],
+            thirdColumn: [2,5,8],
+            firstRow: [0,1,2],
+            secondRow: [3,4,5],
+            thirdRow: [6,7,8],
+            diagonalOne: [0,4,8],
+            diagonalTwo: [2,4,6]
+        }
+
+        for(let property in possibleWins){
+            for(let i =0; i < 3; i++){
+                if(gameBoard[possibleWins[property][i]] != players[0].getSign()){
+                    break;
+                }else if(gameBoard[possibleWins[property][i]] == players[0].getSign() && i == 2){
+                    console.log('Solution found');
+                    pOneWins++;
+                    roundCount++;
+                    statusDisplay.textContent = `${displayOne.textContent} wins`
+                    pOneWinsDisplay.textContent = `${getWins()[0]}`;
+                    winRoundAnimate(possibleWins[property][0], possibleWins[property][1], possibleWins[property][2]);
+                    return true
+                }
+            }
+        }
+
+        for(let property in possibleWins){
+            for(let i =0; i < 3; i++){
+                if(gameBoard[possibleWins[property][i]] != players[1].getSign()){
+                    break;
+                }else if(gameBoard[possibleWins[property][i]] == players[1].getSign() && i == 2){
+                    console.log('Solution found');
+                    pTwoWins++;
+                    roundCount++;
+                    statusDisplay.textContent = `${displayTwo.textContent} wins`
+                    pTwoWinsDisplay.textContent = `${getWins()[1]}`;
+                    winRoundAnimate(possibleWins[property][0], possibleWins[property][1], possibleWins[property][2]);
+                    return true
+                }
+            }
+        }
+
+        console.log('no solution yet');
+        return false;
     }
 
     function boardIncrement(){
         boardCount++;
-        if(getCount() >= 9){
-            roundTie();
+        if(checkWinner() != false){
+            return;
         }else{
-            setTimeout(() =>{
-                gameStart();
-            }, 2000)
+            if(getCount() >= 9){
+                roundTie();
+            }
+            else{
+                setTimeout(() =>{
+                    gameStart();
+                }, 2000)
+            }
         }
     }
 
@@ -323,16 +434,6 @@ const gameplay = (() =>{
                 displayTwo.textContent = 'Bot Two Impossible';
         }
     }
-
-        
-    window.addEventListener('click', function (e){
-        if(e.target.classList.contains('space')){
-            playerMove(e);
-        }else {
-            return;
-        }
-    })
-
 
     function playerMove(e){
         switch(e.target.id){
@@ -546,6 +647,34 @@ const gameplay = (() =>{
 
     }
 
+    function endGame(){
+        displayOne.classList.remove('focus');
+        displayTwo.classList.remove('focus');
+
+        if(getWins()[0] > getWins()[1]){
+            statusDisplay.textContent = `${displayOne.textContent} beats ${displayTwo.textContent}!`;
+            displayOne.innerHTML = `${displayOne.textContent}<i class="fa-solid fa-medal"></i>`
+            displayOne.classList.add('fWin');
+        }
+
+        if(getWins()[0] < getWins()[1]){
+            statusDisplay.textContent = `${displayTwo.textContent} beats ${displayOne.textContent}!`;
+            displayTwo.innerHTML = `${displayTwo.textContent}<i class="fa-solid fa-medal"></i>`
+            displayTwo.classList.add('fWin');
+        }
+
+        if(getWins()[0] == getWins()[1]){
+            statusDisplay.textContent = `Its a draw!`;
+        }
+
+        setTimeout(() =>{
+            restartButton.style.opacity ='1';
+            displayOne.classList.remove('fWin');
+            displayTwo.classList.remove('fWin');
+        }, 3100)
+
+    }
+
     function gameStart(){
                 if(players[0].getDifficulty() > 0 && displayOne.classList.contains('focus')){
                     botMove('X');
@@ -554,7 +683,5 @@ const gameplay = (() =>{
                     botMove('O')
                 }
     }
-
-    
         return { getBoard, getPlayers, getCount};
 })();

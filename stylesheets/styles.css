@@ -246,6 +246,12 @@ body {
           transform: scale(1.5);
 }
 
+.playScreen .players .player.fWin {
+  color: #80ca80;
+  -webkit-transform: scale(1.5);
+          transform: scale(1.5);
+}
+
 .playScreen .gameBoard {
   position: absolute;
   left: 50%;
@@ -279,5 +285,23 @@ body {
 .playScreen .gameBoard .space:hover {
   background-color: rgba(128, 202, 128, 0.411);
   cursor: pointer;
+}
+
+.playScreen #again {
+  opacity: 0;
+  margin-top: 20rem;
+  position: absolute;
+  left: 50%;
+  -webkit-transform: translate(-50%);
+          transform: translate(-50%);
+  padding: .3rem;
+  -webkit-transition: all 500ms ease-in;
+  transition: all 500ms ease-in;
+  border-radius: 15px;
+}
+
+.playScreen #again:hover {
+  background-color: #80ca80;
+  color: white;
 }
 /*# sourceMappingURL=styles.css.map */

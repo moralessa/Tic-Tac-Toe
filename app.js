@@ -14,7 +14,7 @@ const Player = (difficulty, sign)=>{ //Player Factory Function
     return{getSign, getDifficulty};
 }
 
-const selection = (() =>{ //Selection functionality 
+const selection = (() =>{ //Factory function immediately invoked for selection functionality 
     const playerX = document.getElementById('p1');
     const botX = document.getElementById('bot1');
     const playerO = document.getElementById('p2');
@@ -72,7 +72,7 @@ const selection = (() =>{ //Selection functionality
     })
 
 
-    const populateDisplay = () =>{ // Populate display for header of gameplay screen
+    const populateDisplay = () =>{ // Method to populate display for header of load screen
         switch(playerOne.getDifficulty()){
             case 0 :
                 firstSelection.textContent = 'Player One';
@@ -102,7 +102,7 @@ const selection = (() =>{ //Selection functionality
         }
     }
 
-    function createPlayers(selection){ // conditional statements to create games players
+    function createPlayers(selection){ // method with conditional statements to create games players
         switch(selection.id){
             case 'p1':
                 playerOne = Player(0, 'X');
@@ -134,13 +134,13 @@ const selection = (() =>{ //Selection functionality
         }
     }
 
-    function checkStatus(){ // Function to check if players are selected to trigger start button animation
+    function checkStatus(){ // method to check if players are selected to trigger start button animation
         if(playersChosen.xSelection != undefined && playersChosen.oSelection != undefined){
             startGame.classList.add('animate');
         }
        }
 
-    const toggleDifficulty = (bot) =>{ // conditionals for display of cpu difficulty selection
+    const toggleDifficulty = (bot) =>{ // method with conditionals for display of cpu difficulty selection
        switch(bot.textContent){
            case 'CPU':
                 bot.textContent = 'Easy';
@@ -156,7 +156,7 @@ const selection = (() =>{ //Selection functionality
        }
     }
 
-    botX.addEventListener('click', () =>{
+    botX.addEventListener('click', () =>{ 
         toggleDifficulty(botX);
     });
 
@@ -217,7 +217,7 @@ const selection = (() =>{ //Selection functionality
 
 
 
-const gameplay = (() =>{
+const gameplay = (() =>{  //factory function immediately invoked to add functionality for gameplay between two players or an ai
     const startGame = document.getElementById('start');
     let restartButton = document.getElementById('again');
     let displayOne = document.getElementById('playerOne');
@@ -242,7 +242,7 @@ const gameplay = (() =>{
     const getWins = ()=>{return [pOneWins, pTwoWins];}
     const getRoundCount = ()=>{return roundCount;}
 
-    window.addEventListener('click', function (e){
+    window.addEventListener('click', function (e){ // event listener with conditional to trigger playerMove() methodj
         if(e.target.classList.contains('space')){
             playerMove(e);
         }else {
@@ -250,7 +250,7 @@ const gameplay = (() =>{
         }
     })
 
-    startGame.addEventListener('click', () =>{ // event listener that triggers the game start 
+    startGame.addEventListener('click', () =>{ // event listener that triggers the game start method
         players = selection.getPlayers();
         populateDisplay();
         displayOne.classList.add('focus');
@@ -289,8 +289,8 @@ const gameplay = (() =>{
         gameStart();
     })
 
-    function reset(){
-        if(getWins()[0] > 2 || getWins()[1] > 2 || getRoundCount() > 5){
+    function reset(){ //method to reset the stats of the game every round
+        if(getWins()[0] > 2 || getWins()[1] > 2 || getRoundCount() > 5){ // conditional to ensure the game hasn't ended 
             console.log('end of game')
             endGame();
             return;
@@ -314,7 +314,7 @@ const gameplay = (() =>{
         }, 3000)
     }
 
-    function roundTie(){ // function that animates a tie case and resets the game
+    function roundTie(){ // method that animates a tie case and resets the game
         roundCount++;
         statusDisplay.textContent = 'Game Tied';
         spaces.forEach(space =>{
@@ -326,7 +326,7 @@ const gameplay = (() =>{
         reset();
     }
 
-    function winRoundAnimate(indexOne, indexTwo, indexThree){ //function that animates a win case and resets the game
+    function winRoundAnimate(indexOne, indexTwo, indexThree){ //method that animates a win case and resets the game
         let animations = [];
         animations.push(document.getElementById(`s${indexOne}`));
         animations.push(document.getElementById(`s${indexTwo}`));
@@ -341,7 +341,7 @@ const gameplay = (() =>{
         reset();
     }
 
-    function checkWinner(){ // function to check if their is a winner
+    function checkWinner(){ // method to check if their is a winner
         let possibleWins = {
             firstColumn: [0,3,6],
             secondColumn: [1,4,7],
@@ -353,7 +353,7 @@ const gameplay = (() =>{
             diagonalTwo: [2,4,6]
         }
 
-        for(let property in possibleWins){
+        for(let property in possibleWins){ // iterate over possible wins for player 'X'
             for(let i =0; i < 3; i++){
                 if(gameBoard[possibleWins[property][i]] != players[0].getSign()){
                     break;
@@ -369,7 +369,7 @@ const gameplay = (() =>{
             }
         }
 
-        for(let property in possibleWins){
+        for(let property in possibleWins){ // iterate over possible wins for player 'O'
             for(let i =0; i < 3; i++){
                 if(gameBoard[possibleWins[property][i]] != players[1].getSign()){
                     break;
@@ -389,7 +389,7 @@ const gameplay = (() =>{
         return false;
     }
 
-    function boardIncrement(){
+    function boardIncrement(){ // method to increment the board count and check if their is a winner or tie if neither it starts a new round
         boardCount++;
         if(checkWinner() != false){
             return;
@@ -405,7 +405,7 @@ const gameplay = (() =>{
         }
     }
 
-    function populateDisplay(){
+    function populateDisplay(){ // method to populate the display of the header based on user selection
         switch(players[0].getDifficulty()){
             case 0:
                 displayOne.textContent = 'Player One';
@@ -435,7 +435,7 @@ const gameplay = (() =>{
         }
     }
 
-    function playerMove(e){
+    function playerMove(e){ // method to add functionality to a players move
         switch(e.target.id){
             case 's0':
                 if(players[0].getDifficulty() == 0 && displayOne.classList.contains('focus') && gameBoard[0] == ' '){
@@ -594,7 +594,7 @@ const gameplay = (() =>{
         }
     }
     
-    function botEasy(sign){
+    function botEasy(sign){ // method to create an easy AI for the game 
         let index = Math.floor(Math.random() * 9);
         while(gameBoard[index] != ' '){
             index = Math.floor(Math.random() * 9);
@@ -618,7 +618,7 @@ const gameplay = (() =>{
         
     }
 
-    function botMove(sign){
+    function botMove(sign){ // method to determine what level of difficulty should be chosen for the bot
         switch(sign){
             case 'X':
                 console.log('Bot X Move');
@@ -647,7 +647,7 @@ const gameplay = (() =>{
 
     }
 
-    function endGame(){
+    function endGame(){ // method to animate the end of the game
         displayOne.classList.remove('focus');
         displayTwo.classList.remove('focus');
 
@@ -675,7 +675,7 @@ const gameplay = (() =>{
 
     }
 
-    function gameStart(){
+    function gameStart(){ // method for gameplay 
                 if(players[0].getDifficulty() > 0 && displayOne.classList.contains('focus')){
                     botMove('X');
                 }

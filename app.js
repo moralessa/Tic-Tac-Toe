@@ -145,14 +145,14 @@ const selection = (() =>{ //Factory function immediately invoked for selection f
            case 'CPU':
                 bot.textContent = 'Easy';
                 break;
-            // case 'Easy':
-            //     bot.textContent = 'Hard';
-            //     break;
-            // case 'Hard':
-            //     bot.textContent = 'Impossible';
-            //     break;
-            // case 'Impossible':
-            //     bot.textContent = 'Easy';
+            case 'Easy':
+                bot.textContent = 'Hard';
+                break;
+            case 'Hard':
+                bot.textContent = 'Impossible';
+                break;
+            case 'Impossible':
+                bot.textContent = 'Easy';
        }
     }
 
@@ -618,6 +618,119 @@ const gameplay = (() =>{  //factory function immediately invoked to add function
         
     }
 
+    function miniMaxCheckWinner(player, opposition, board){
+        console.log(player);
+        console.log(opposition);
+        let possibleWins = {
+            firstColumn: [0,3,6],
+            secondColumn: [1,4,7],
+            thirdColumn: [2,5,8],
+            firstRow: [0,1,2],
+            secondRow: [3,4,5],
+            thirdRow: [6,7,8],
+            diagonalOne: [0,4,8],
+            diagonalTwo: [2,4,6]
+        }
+
+        for(let property in possibleWins){ // iterate over possible wins for player 'X'
+            for(let i =0; i < 3; i++){
+                if(board[possibleWins[property][i]] != player){
+                    break;
+                }else if(board[possibleWins[property][i]] == player && i == 2){
+                    console.log('Player won')
+                    return 1;
+                }
+            }
+        }
+
+        for(let property in possibleWins){ // iterate over possible wins for player 'X'
+            for(let i =0; i < 3; i++){
+                if(board[possibleWins[property][i]] != opposition){
+                    break;
+                }else if(board[possibleWins[property][i]] == opposition && i == 2){
+                    console.log('Opposition won')
+                    return -1;
+                }
+            }
+        }
+
+        if(!board.includes(' ')){
+            console.log('Tie!')
+            return 0;
+        }else{
+            console.log("Null option-")
+            console.log(board);
+            return null;
+        }
+    }
+
+    function botImpossible(sign){
+        let root = [];
+        for(let i = 0; i < getBoard().length; i++){
+            root[i] = getBoard()[i];
+        }
+        let bestScore = -Infinity;
+        let bestMove; 
+        for(let i = 0; i < root.length; i++){
+            if(root[i] == ' '){//if spot is available
+                root[i] = sign;
+                let score = miniMax(root, 0, true, sign);
+                root[i] = ' ';
+                if(score > bestScore){
+                    bestScore = score;
+                    bestMove = i;
+                }
+            }
+        }
+
+        console.log('i called')
+        document.getElementById(`s${bestMove}`).textContent = sign;
+        gameBoard[bestMove] = sign;
+        displayTwo.classList.remove('focus');
+        displayOne.classList.add('focus');
+        boardIncrement();
+    }
+
+    function miniMax(board, depth, isMaximizing, player){
+        let opposingPlayer;
+        if(player == 'X'){
+            opposingPlayer = 'O'
+        }else{
+            opposingPlayer = 'X'
+        }
+        let result = miniMaxCheckWinner(player, opposingPlayer, board);
+        console.log('mini max called');
+        console.log(result);
+        if(result != null){
+            return result;
+        }
+        if(isMaximizing){
+            let bestScore = -Infinity;
+            for(let i = 0; i < board.lengh; i++){
+                if(board[i] == ' '){
+                    board[i] = player;
+                    let score = miniMax(board, depth + 1, true, player);
+                    board[i] = ' ';
+                    bestScore = max(score, bestScore);
+                }
+            }
+            console.log('return bestscore: ' +  bestScore);
+            return bestScore;
+        }else{
+            let bestScore = Infinity;
+            for(let i = 0; i < board.lengh; i++){
+                if(board[i] == ' '){
+                    board[i] = opposingPlayer;
+                    let score = miniMax(board, depth + 1, false, opposingPlayer);
+                    board[i] = ' ';
+                    bestScore = min(score, bestScore);
+                }
+            }
+            console.log('return bestscore: ' +  bestScore);
+            return bestScore;
+        }
+    }
+
     function botMove(sign){ // method to determine what level of difficulty should be chosen for the bot
         switch(sign){
             case 'X':
@@ -641,6 +754,7 @@ const gameplay = (() =>{  //factory function immediately invoked to add function
                     botHard('O');
                 }
                 if(players[1].getDifficulty() == 3){
+                    console.log('impossible is called');
                     botImpossible('O');
                 }
         }

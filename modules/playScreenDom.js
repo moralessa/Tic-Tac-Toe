@@ -27,12 +27,21 @@ function updateRoundCount(){
 
 }
 
-function updateGameBoard(){
+function updateDomBoard(){
 
 }
 
-function highLightActivePlayer(){
+function highLightActivePlayer(sign){
+    const playerOne = document.getElementById('playerOne');
+    const playerTwo = document.getElementById('playerTwo');
 
+    if(sign === 'X'){
+        playerOne.classList.add('focus')
+        playerTwo.classList.remove('focus');
+    }else{
+        playerOne.classList.remove('focus')
+        playerTwo.classList.add('focus');
+    }
 }
 
-export{bootPlayScreen, updateWins, updateRoundCount, highLightActivePlayer};
+export{bootPlayScreen, updateWins, updateRoundCount, highLightActivePlayer, updateDomBoard};

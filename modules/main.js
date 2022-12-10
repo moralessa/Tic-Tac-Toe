@@ -1,24 +1,21 @@
 import { bootUpGame, startGameAnimations } from "./homeScreenDom.js";
 import { bootLoadScreen } from "./loadScreenDom.js";
-import { bootPlayScreen, updateRoundCount, updateWins, highLightActivePlayer } from "./playScreenDom.js";
+import { bootPlayScreen, updateRoundCount, updateWins, highLightActivePlayer, updateDomBoard } from "./playScreenDom.js";
 
 const startButton = document.getElementById('start');
-let newGame;
 let selectedPlayers;
-
-function Game(players){
-    this.roundCount = 0;
-    this.playerOne = players[0];
-    this.playerTwo = players[1];
-    this.wins = [];
-    this.roundCount = 0;
-    this.gameBoard = 
-    ['-', '-', '-'
-    ,'-', '-', '-'
-    ,'-', '-', '-'];
-}
-
-
+let playerOneWins = 0;
+let playerTwoWins = 0;
+let xTurn = false;
+let roundCount = 0;
+let gameBoard =  
+['-', '-', '-'
+,'-', '-', '-'
+,'-', '-', '-'];
+const winningCombinations = 
+[[0,1,2], [3,4,5], [6,7,8], 
+ [0,3,6], [1,4,7], [2,5,8],
+ [0,4,8], [2,4,6]];
 
 
 startButton.addEventListener('click', ()=>{
@@ -27,63 +24,98 @@ startButton.addEventListener('click', ()=>{
         bootLoadScreen(selectedPlayers).then(()=>{
             setTimeout(()=>{
                 bootPlayScreen(selectedPlayers).then(()=>{
-                    newGame = new Game(selectedPlayers);
-                    gameStart(newGame);
+                    gameStart();
                 })
             }, 1000)
         })
     }, 2000)
 })
 
-function botMoveEasy(){
-
-}
-
-function botMoveHard(){
-
-}
-
-function botMove(){
-
-}
-
-function nextTurn(player, board){
-    return new Promise(resolve=>{
-        if(player.textContent === 'Easy'){
-            botMoveEasy(board);
-        }else if(player.textContent === 'Hard'){
-            botMoveHard(board);
-        }else if(player.textContent === 'Impossible'){
-            botMoveImpossible(board);
-        }else{
-            playerMove(board);
+function checkWinner(sign){
+    let winningCombo;
+    for(let i = 0; i < winningCombinations.length; i++){
+        let won = true;
+        for(let j = 0; j < winningCombinations[i].length; j++){
+            if(winningCombinations[i][j] !== sign){
+                won = false;            
+            }
         }
-    })
+        if(won){
+            winningCombo = winningCombinations[i];
+            break;
+        }
+    }
+    return winningCombo;
 }
 
-function determineRoundWinner(board){
-    let winningCombinations = 
-    [[0,1,2], [3,4,5], [6,7,8], 
-     [0,3,6], [1,4,7], [2,5,8],
-     [0,4,8], [2,4,6]];
+function determineDifficulty(player){
+    if(player.textContent === 'Easy'){
+        return 1;
+    }else if(player.textContent === 'Hard'){
+        return 2;
+    }else if (player.textContent === 'Impossible'){
+        return 3;
+    }else{
+        return 4;
+    }
 }
 
-function gameStart(game){
-    if(game.roundCount === 5){
-        endGame(game);
+
+function updateGameBoard(index, sign){
+    gameBoard[index] = sign;
+}
+
+function handleClick(e, sign, index){
+    return function (){
+        const space = e.target;
+        if(space.textContent !== 'X' || space.textContent !== 'O'){
+            space.textContent = sign;
+            updateGameBoard(index, sign);
+        }
+    }
+}
+
+function playerMove(sign){
+    const spaces = document.querySelectorAll('.space');
+    for(let i = 0; i < spaces.length; i++){
+        spaces[i].addEventListener('click', handleClick(sign, i));
+    }
+}
+
+function nextTurn(sign){
+    let player;
+    if(sign === 'X'){
+        player = selectedPlayers[0];
+    }else{
+        player = selectedPlayers[1];
     }
 
-    nextTurn(game.players[0], game.gameBoard).then(()=>{
-        nextTurn(game.players[1], game.gameBoard).then(()=>{
-            determineRoundWinner(game.gameBoard);
-        })
-    })
-
+    let difficulty = determineDifficulty(player);
+    if (difficulty === 1){
+        botMoveEasy();
+    }else if(difficulty === 2){
+        botMoveHard();
+    }else if(difficulty === 3){
+        botMoveImpossible();
+    }else{
+        playerMove(sign);
+    }
 }
 
-function endGame(game){
+function gameStart(){
+    if(xTurn){
+        highLightActivePlayer('X');
+        nextTurn('X');
+    }else{
+        highLightActivePlayer('O');
+        nextTurn('O');
+    }
 
+    // if(checkWinner()){
+    //     alert('Winner');
+    // }else{
+    //     gameStart();
+    // }
 }
-
 
 bootUpGame();

@@ -17,17 +17,24 @@ export function bootLoadScreen(players){
     loadScreen.classList.remove('d-none');
     loadScreen.classList.add('animate__bounceIn');
 
-    setTimeout(() =>{
-        loadStart.classList.remove('d-none');
-        loadStart.classList.add('animate__bounceIn');
-
-        const timer = setInterval(()=>{
-            count--;
-            countDown.textContent = count;
-            if(count === 0){
-                clearInterval(timer);
-            }
+    return new Promise(resolve =>{
+        setTimeout(() =>{
+            loadStart.classList.remove('d-none');
+            loadStart.classList.add('animate__bounceIn');
+    
+            const timer = setInterval(()=>{
+                count--;
+                countDown.textContent = count;
+                if(count === 0){
+                    clearInterval(timer);
+                    loadScreen.classList.remove('animate__bounceIn');
+                    loadScreen.classList.add('animate__bounceOut');
+                    setTimeout(()=>{
+                        loadScreen.classList.add('d-none');
+                        resolve('Timer countdown finished');
+                    }, 1000)
+                }
+            }, 1000)
         }, 1000)
-    }, 1000)
-
+    })
 }

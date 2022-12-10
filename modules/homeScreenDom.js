@@ -1,4 +1,4 @@
-function startGame(){
+function startGameAnimations(){
     let selected = document.querySelectorAll('.selected');
     const homeScreen = document.querySelector('.homeScreen');
     homeScreen.classList.add('animate__bounceOut');
@@ -103,4 +103,4 @@ function bootUpGame(){
     })
 }
 
-export {bootUpGame, startGame};
+export {bootUpGame, startGameAnimations};

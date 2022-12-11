@@ -6,7 +6,7 @@ const startButton = document.getElementById('start');
 let selectedPlayers;
 let playerOneWins = 0;
 let playerTwoWins = 0;
-let xTurn = false;
+let xTurn = true;
 let roundCount = 0;
 let gameBoard =  
 ['-', '-', '-'
@@ -31,91 +31,50 @@ startButton.addEventListener('click', ()=>{
     }, 2000)
 })
 
-function checkWinner(sign){
-    let winningCombo;
-    for(let i = 0; i < winningCombinations.length; i++){
-        let won = true;
-        for(let j = 0; j < winningCombinations[i].length; j++){
-            if(winningCombinations[i][j] !== sign){
-                won = false;            
-            }
-        }
-        if(won){
-            winningCombo = winningCombinations[i];
-            break;
-        }
+function calculateDifficulty(player){
+    switch(player.textContent){
+        case 'Easy':
+            return 1;
+        case 'Hard':
+            return 2;
+        case 'Impossible':
+            return 3;
     }
-    return winningCombo;
+
+    return 4;
 }
 
-function determineDifficulty(player){
-    if(player.textContent === 'Easy'){
-        return 1;
-    }else if(player.textContent === 'Hard'){
-        return 2;
-    }else if (player.textContent === 'Impossible'){
-        return 3;
-    }else{
-        return 4;
-    }
-}
-
-
-function updateGameBoard(index, sign){
-    gameBoard[index] = sign;
-}
-
-function handleClick(e, sign, index){
-    return function (){
-        const space = e.target;
-        if(space.textContent !== 'X' || space.textContent !== 'O'){
-            space.textContent = sign;
-            updateGameBoard(index, sign);
-        }
-    }
-}
-
-function playerMove(sign){
-    const spaces = document.querySelectorAll('.space');
-    for(let i = 0; i < spaces.length; i++){
-        spaces[i].addEventListener('click', handleClick(sign, i));
-    }
-}
-
-function nextTurn(sign){
-    let player;
+function playerLogic(sign){
+    let difficulty;
     if(sign === 'X'){
-        player = selectedPlayers[0];
+        difficulty = calculateDifficulty(selectedPlayers[0]);
     }else{
-        player = selectedPlayers[1];
+        difficulty = calculateDifficulty(selectedPlayers[1]);
     }
 
-    let difficulty = determineDifficulty(player);
-    if (difficulty === 1){
-        botMoveEasy();
-    }else if(difficulty === 2){
-        botMoveHard();
-    }else if(difficulty === 3){
-        botMoveImpossible();
-    }else{
-        playerMove(sign);
+    switch(difficulty){
+        case 1:
+            botMoveEasy();
+            break;
+        case 2: 
+            botMoveHard();
+            break;
+        case 3: 
+            botMoveImpossible();
+            break;
+        case 4:
+            playerMove();
     }
 }
 
 function gameStart(){
     if(xTurn){
         highLightActivePlayer('X');
-        nextTurn('X');
+        playerLogic('X');
     }else{
         highLightActivePlayer('O');
-        nextTurn('O');
+        playerLogic('O')
     }
-
-    // if(checkWinner()){
-    //     alert('Winner');
-    // }else{
-    //     gameStart();
-    // }
 }
 
 bootUpGame();

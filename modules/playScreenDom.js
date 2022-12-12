@@ -18,19 +18,6 @@ function bootPlayScreen(players){
     })
 }
 
-
-function updateWins(){
-
-}
-
-function updateRoundCount(){
-
-}
-
-function updateDomBoard(){
-
-}
-
 function highLightActivePlayer(sign){
     const playerOne = document.getElementById('playerOne');
     const playerTwo = document.getElementById('playerTwo');
@@ -44,4 +31,66 @@ function highLightActivePlayer(sign){
     }
 }
 
-export{bootPlayScreen, updateWins, updateRoundCount, highLightActivePlayer, updateDomBoard};
+function updateDomBoard(){
+
+}
+
+function updateDomRoundCount(count){
+    const roundCount = document.getElementById('roundCount');
+    roundCount.textContent = count;
+}
+
+function updateDomWins(p1, p2){
+    const playerOne = document.getElementById('firstPlayerWins');
+    const playerTwo = document.getElementById('secondPlayerWins');
+    playerOne.textContent = p1;
+    playerTwo.textContent = p2;
+}
+
+function updateDomStatus(player = 'tie'){
+    const roundStatus = document.getElementById('status');
+    if(player === 'tie'){
+        roundStatus.textContent = 'It\'s a tie!';
+    }else{
+        roundStatus.textContent = `${player.id} wins this round`;
+    }
+}
+
+function clearDomStatus(){
+    const roundStatus = document.getElementById('status');
+    roundStatus.textContent = '';
+}
+
+function highLightRoundWinner(sign = 'tie', p1, p2){
+    if(sign === 'tie'){
+        resetRoundWinnerHighlight();
+        updateDomStatus();
+        return;
+    }else{
+        highLightActivePlayer(sign);
+    }
+
+    if(sign === 'X'){
+        updateDomStatus(p1);
+    }else {
+        updateDomStatus(p2);
+    }
+}
+
+function resetRoundWinnerHighlight(){
+    const playerOne = document.getElementById('firstPlayerWins');
+    const playerTwo = document.getElementById('secondPlayerWins');
+    playerOne.classList.remove('focus');
+    playerTwo.classList.remove('focus');
+}
+
+function clearDomBoard(){
+    const spaces = document.querySelectorAll('.space')
+    spaces.forEach(space =>{
+        space.textContent = '';
+    })
+}
+
+
+export{bootPlayScreen, updateDomWins, updateDomRoundCount, highLightActivePlayer,
+     updateDomBoard, highLightRoundWinner, resetRoundWinnerHighlight, clearDomBoard, clearDomStatus};

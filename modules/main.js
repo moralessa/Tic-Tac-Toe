@@ -1,6 +1,7 @@
 import { bootUpGame, startGameAnimations } from "./homeScreenDom.js";
 import { bootLoadScreen } from "./loadScreenDom.js";
-import { bootPlayScreen, updateRoundCount, updateWins, highLightActivePlayer, updateDomBoard } from "./playScreenDom.js";
+import { bootPlayScreen, updateDomRoundCount, updateDomWins, highLightActivePlayer, 
+    updateDomBoard, highLightRoundWinner, clearDomBoard, clearDomStatus} from "./playScreenDom.js";
 
 const startButton = document.getElementById('start');
 let selectedPlayers;
@@ -10,9 +11,9 @@ const spaces = document.querySelectorAll('.space');
 let playerSign = 'X'
 let roundCount = 0;
 let gameBoard =  
-['-', '-', '-'
-,'-', '-', '-'
-,'-', '-', '-'];
+['', '', ''
+,'', '', ''
+,'', '', ''];
 const winningCombinations = 
 [[0,1,2], [3,4,5], [6,7,8], 
  [0,3,6], [1,4,7], [2,5,8],
@@ -40,39 +41,23 @@ function spaceTaken(space){
     return false;
 }
 
-function checkWinner(){
-    let winner;
-    for(let i = 0; i < winningCombinations.length; i++){
-        let won = true;
-        for(let j = 0; j < winningCombinations[i].length; j++){
-            if(gameBoard[winningCombinations[i][j]] !== 'X'){
-                won = false;
-                break;
-            }
-        }
-        if(won){
-            winner = 'X';
-        }
-    }
-     
-    if(winner){
-        return winner;
-    }
+function checkRoundWinner(){
+    return winningCombinations.some(combo =>{
+        return combo.every(index =>{
+            return gameBoard[index] === playerSign;
+        })
+    })
+}
 
-    for(let i = 0; i < winningCombinations.length; i++){
-        let won = true;
-        for(let j = 0; j < winningCombinations[i].length; j++){
-            if(gameBoard[winningCombinations[i][j]] !== 'O'){
-                won = false;
-                break;
-            }
-        }
-        if(won){
-            winner = 'O';
+function checkRoundTie(){
+    let full = true;
+    for(let i = 0; i < gameBoard.length; i++){
+        if(gameBoard[i] !== 'X' && gameBoard[i] !== 'O'){
+            full = false;
+            break;
         }
     }
-
-    return winner;
+    return full;
 }
 
 function swapTurn(){
@@ -91,16 +76,82 @@ function updateGameBoard(){
     })
 }
 
+function updateWins(winner){
+    if(winner === 'X'){
+        playerOneWins++;
+    }else if(winner === 'O'){
+        playerTwoWins++;
+    }
+}
+
+
+function removeSpaceClickEvent(){
+    spaces.forEach(space =>{
+        space.removeEventListener('click', handleClick);
+    })
+}
+
+function endGame(winner = 'tie'){
+     if(winner === 'X'){
+        alert('X Wins!');
+     }else if(winner === 'O'){
+        alert('O Win!');
+     }else if(winner === 'tie'){
+        alert('It\'s a tie!')
+     }
+
+     alert('play again? ');
+
+}
+
+function determineGameWinner(){
+    if(roundCount === 5){
+        if(playerOneWins > playerTwoWins){
+            endGame('X');
+        }else if(playerOneWins < playerTwoWins){
+            endGame('O');
+        }else if(playerOneWins === playerTwoWins){
+            endGame();
+        }
+    }else if(playerOneWins >= 3)
+    {   
+        endGame('X')
+    }else if(playerTwoWins >= 3){
+        endGame('O');
+    }else{
+        setTimeout(() =>{
+            playerSign = 'X';
+            gameBoard = 
+            ['', '', ''
+            ,'', '', ''
+            ,'', '', ''];
+            clearDomBoard();
+            clearDomStatus();
+            gameStart();
+        }, 2000)
+    }
+}
+
+function endRound(winner){
+    removeSpaceClickEvent();
+    roundCount++;
+    updateWins(winner);
+    updateDomWins(playerOneWins, playerTwoWins);
+    highLightRoundWinner(winner, selectedPlayers[0], selectedPlayers[1]);
+    updateDomRoundCount(roundCount);
+    determineGameWinner();
+}
+
+
 function handleClick(e){
     const space = e.target;
     if(!spaceTaken(space)){
         space.textContent = playerSign;
         updateGameBoard();
-        if(checkWinner()){
-            spaces.forEach(space =>{
-                space.removeEventListener('click', handleClick)
-            })
-            alert('we have a winner');
+        if(checkRoundWinner()){
+            endRound(playerSign);
+        }else if(checkRoundTie()){
+            endRound();
         }else{
             swapTurn();
             gameStart();
@@ -128,7 +179,6 @@ function calculateDifficulty(player){
 }
 
 function playerLogic(){
-    console.log('sign: ' + playerSign);
     let difficulty;
     if(playerSign === 'X'){
         difficulty = calculateDifficulty(selectedPlayers[0]);

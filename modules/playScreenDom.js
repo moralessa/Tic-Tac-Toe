@@ -13,7 +13,6 @@ function bootPlayScreen(players){
 
         playerOne.textContent = formatPlayerText(players[0]);
         playerTwo.textContent = formatPlayerText(players[1]);
-        console.log(players[0].parentNode);
         resolve('finished playScreen animation');
     })
 }
@@ -31,8 +30,15 @@ function highLightActivePlayer(sign){
     }
 }
 
-function updateDomBoard(){
-
+function updateDomBoard(index, sign){
+    const chosenSpace = document.getElementById(`s${index}`);
+    setTimeout(()=>{
+        chosenSpace.textContent = sign;
+        chosenSpace.style.backgroundColor = 'rgba(128, 202, 128, 0.411)';
+        setTimeout(()=>{
+            chosenSpace.style.backgroundColor = 'white';
+        }, 500)
+    }, 500)
 }
 
 function updateDomRoundCount(count){
@@ -51,6 +57,8 @@ function updateDomStatus(player = 'tie'){
     const roundStatus = document.getElementById('status');
     if(player === 'tie'){
         roundStatus.textContent = 'It\'s a tie!';
+    }else if(player === 'new round'){
+        roundStatus.textContent = 'Initiating new round';
     }else{
         roundStatus.textContent = `${player.id} wins this round`;
     }
@@ -60,6 +68,7 @@ function clearDomStatus(){
     const roundStatus = document.getElementById('status');
     roundStatus.textContent = '';
 }
+
 
 function highLightRoundWinner(sign = 'tie', p1, p2){
     if(sign === 'tie'){
@@ -92,5 +101,5 @@ function clearDomBoard(){
 }
 
 
-export{bootPlayScreen, updateDomWins, updateDomRoundCount, highLightActivePlayer,
+export{bootPlayScreen, updateDomWins, updateDomRoundCount, highLightActivePlayer, updateDomStatus,
      updateDomBoard, highLightRoundWinner, resetRoundWinnerHighlight, clearDomBoard, clearDomStatus};

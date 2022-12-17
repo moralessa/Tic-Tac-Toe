@@ -1,7 +1,7 @@
 import { bootUpGame, startGameAnimations } from "./homeScreenDom.js";
 import { bootLoadScreen } from "./loadScreenDom.js";
 import { bootPlayScreen, updateDomRoundCount, updateDomWins, highLightActivePlayer, 
-    updateDomBoard, highLightRoundWinner, clearDomBoard, clearDomStatus} from "./playScreenDom.js";
+    updateDomBoard, highLightRoundWinner, clearDomBoard, clearDomStatus, updateDomStatus} from "./playScreenDom.js";
 
 const startButton = document.getElementById('start');
 let selectedPlayers;
@@ -34,7 +34,7 @@ startButton.addEventListener('click', ()=>{
 })
 
 function spaceTaken(space){
-    if(space.textContent === 'X' || space.textContent === 'O'){
+    if(space === 'X' || space === 'O'){
         return true;
     }
 
@@ -133,29 +133,35 @@ function determineGameWinner(){
 }
 
 function endRound(winner){
+    console.log(winner);
     removeSpaceClickEvent();
     roundCount++;
     updateWins(winner);
     updateDomWins(playerOneWins, playerTwoWins);
     highLightRoundWinner(winner, selectedPlayers[0], selectedPlayers[1]);
     updateDomRoundCount(roundCount);
-    determineGameWinner();
+    setTimeout(() =>{
+        determineGameWinner();
+    }, 1000)
 }
 
+function updateRoundLogic(){
+    if(checkRoundWinner()){
+        endRound(playerSign);
+    }else if(checkRoundTie()){
+        endRound();
+    }else{
+        swapTurn();
+        gameStart();
+    }
+}
 
 function handleClick(e){
     const space = e.target;
-    if(!spaceTaken(space)){
+    if(!spaceTaken(space.textContent)){
         space.textContent = playerSign;
         updateGameBoard();
-        if(checkRoundWinner()){
-            endRound(playerSign);
-        }else if(checkRoundTie()){
-            endRound();
-        }else{
-            swapTurn();
-            gameStart();
-        }
+        updateGameLogic();
     }
 }
 
@@ -163,6 +169,20 @@ function playerMove(){
     spaces.forEach(space =>{
         space.addEventListener('click', handleClick , {once : true});
     })
+}
+
+function botMoveEasy(){
+    let index = Math.floor(Math.random() * gameBoard.length);
+    if(!spaceTaken(gameBoard[index])){
+        gameBoard[index] = playerSign;
+        updateDomBoard(index, playerSign);
+        setTimeout(()=>{
+            updateRoundLogic();
+        }, 2000)
+        return true;
+    }else{
+        return botMoveEasy();
+    }
 }
 
 function calculateDifficulty(player){

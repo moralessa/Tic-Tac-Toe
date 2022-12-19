@@ -53,7 +53,7 @@ function updateDomWins(p1, p2){
     playerTwo.textContent = p2;
 }
 
-function updateDomStatus(player = 'tie'){
+function updateDomRoundStatus(player = 'tie'){
     const roundStatus = document.getElementById('status');
     if(player === 'tie'){
         roundStatus.textContent = 'It\'s a tie!';
@@ -73,16 +73,16 @@ function clearDomStatus(){
 function highLightRoundWinner(sign = 'tie', p1, p2){
     if(sign === 'tie'){
         resetRoundWinnerHighlight();
-        updateDomStatus();
+        updateDomRoundStatus();
         return;
     }else{
         highLightActivePlayer(sign);
     }
 
     if(sign === 'X'){
-        updateDomStatus(p1);
+        updateDomRoundStatus(p1);
     }else {
-        updateDomStatus(p2);
+        updateDomRoundStatus(p2);
     }
 }
 
@@ -100,6 +100,34 @@ function clearDomBoard(){
     })
 }
 
+function endGameDomAnimation(sign, player){
+    const roundStatus = document.getElementById('status');
+    const playerOne = document.getElementById('playerOne');
+    const playerTwo = document.getElementById('playerTwo');
+    const playAgainButton = document.getElementById('again');
+    let crownIcon = document.createElement('i');
+    crownIcon.classList.add('fa-solid', 'fa-crown');
+    crownIcon.style.marginLeft = '20px';
+    if(sign === 'X'){
+        highLightActivePlayer(sign);
+        playerOne.append(crownIcon);
+        roundStatus.textContent = `${player.id} is the winner!`
+    }else if(sign === 'O'){
+        highLightActivePlayer(sign);
+        playerTwo.append(crownIcon);
+        roundStatus.textContent = `${player.id} is the winner!`;
+    }else{
+        roundStatus.textContent = `The Game ended in a tie! 💩`
+    }
 
-export{bootPlayScreen, updateDomWins, updateDomRoundCount, highLightActivePlayer, updateDomStatus,
+    setTimeout(()=>{
+        playAgainButton.style.opacity = 1;
+        playAgainButton.addEventListener('click', ()=>{
+            location.reload();
+        })
+    }, 1000)
+}
+
+
+export{bootPlayScreen, updateDomWins, updateDomRoundCount, highLightActivePlayer, endGameDomAnimation,
      updateDomBoard, highLightRoundWinner, resetRoundWinnerHighlight, clearDomBoard, clearDomStatus};

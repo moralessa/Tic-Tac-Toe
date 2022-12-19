@@ -1,9 +1,10 @@
 import { bootUpGame, startGameAnimations } from "./homeScreenDom.js";
 import { bootLoadScreen } from "./loadScreenDom.js";
-import { bootPlayScreen, updateDomRoundCount, updateDomWins, highLightActivePlayer, 
-    updateDomBoard, highLightRoundWinner, clearDomBoard, clearDomStatus, updateDomStatus} from "./playScreenDom.js";
+import { bootPlayScreen, updateDomRoundCount, updateDomWins, highLightActivePlayer, endGameDomAnimation,
+    updateDomBoard, highLightRoundWinner, clearDomBoard, clearDomStatus, resetRoundWinnerHighlight, } from "./playScreenDom.js";
 
 const startButton = document.getElementById('start');
+const returnButton = document.querySelector('.return');
 let selectedPlayers;
 let playerOneWins = 0;
 let playerTwoWins = 0;
@@ -19,6 +20,10 @@ const winningCombinations =
  [0,3,6], [1,4,7], [2,5,8],
  [0,4,8], [2,4,6]];
 
+
+returnButton.addEventListener('click',  ()=>{
+    location.reload();
+})
 
 startButton.addEventListener('click', ()=>{
     selectedPlayers = startGameAnimations();
@@ -85,23 +90,16 @@ function updateWins(winner){
 }
 
 
-function removeSpaceClickEvent(){
-    spaces.forEach(space =>{
-        space.removeEventListener('click', handleClick);
-    })
-}
-
 function endGame(winner = 'tie'){
-     if(winner === 'X'){
-        alert('X Wins!');
-     }else if(winner === 'O'){
-        alert('O Win!');
-     }else if(winner === 'tie'){
-        alert('It\'s a tie!')
-     }
-
-     alert('play again? ');
-
+    clearDomStatus();
+    resetRoundWinnerHighlight();
+    if(winner === 'X'){
+    endGameDomAnimation('X', selectedPlayers[0]);
+    }else if(winner === 'O'){
+        endGameDomAnimation('O', selectedPlayers[1]);
+    }else if(winner === 'tie'){
+        endGameDomAnimation(null, null);
+    }
 }
 
 function determineGameWinner(){
@@ -156,12 +154,18 @@ function updateRoundLogic(){
     }
 }
 
+function removeSpaceClickEvent(){
+    spaces.forEach(space =>{
+        space.removeEventListener('click', handleClick);
+    })
+}
+
 function handleClick(e){
     const space = e.target;
     if(!spaceTaken(space.textContent)){
         space.textContent = playerSign;
         updateGameBoard();
-        updateGameLogic();
+        updateRoundLogic();
     }
 }
 
@@ -173,16 +177,15 @@ function playerMove(){
 
 function botMoveEasy(){
     let index = Math.floor(Math.random() * gameBoard.length);
-    if(!spaceTaken(gameBoard[index])){
-        gameBoard[index] = playerSign;
-        updateDomBoard(index, playerSign);
-        setTimeout(()=>{
-            updateRoundLogic();
-        }, 2000)
-        return true;
-    }else{
-        return botMoveEasy();
+    while(spaceTaken(gameBoard[index])){
+        index = Math.floor(Math.random() * gameBoard.length);
     }
+    gameBoard[index] = playerSign;
+    updateDomBoard(index, playerSign);
+    setTimeout(()=>{
+        updateRoundLogic();
+    }, 1000)
+    return true;
 }
 
 function calculateDifficulty(player){
@@ -222,6 +225,7 @@ function playerLogic(){
 }
 
 function gameStart(){
+    removeSpaceClickEvent();
     playerLogic();
     highLightActivePlayer(playerSign);
 }

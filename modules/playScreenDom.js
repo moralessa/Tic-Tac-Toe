@@ -37,7 +37,7 @@ function updateDomBoard(index, sign){
         chosenSpace.style.backgroundColor = 'rgba(128, 202, 128, 0.411)';
         setTimeout(()=>{
             chosenSpace.style.backgroundColor = 'white';
-        }, 500)
+        }, 300)
     }, 500)
 }
 
@@ -70,12 +70,19 @@ function clearDomStatus(){
 }
 
 
-function highLightRoundWinner(sign = 'tie', p1, p2){
+function highLightRoundWinner(sign = 'tie', p1, p2, combo){
+    const spaces = document.querySelectorAll('.space');
     if(sign === 'tie'){
+        spaces.forEach(space =>{
+            space.style.backgroundColor = 'rgba(128, 202, 128, 0.411)';
+        })
         resetRoundWinnerHighlight();
         updateDomRoundStatus();
         return;
     }else{
+        for(let i = 0; i < combo.length; i++){
+            spaces[combo[i]].style.backgroundColor = 'rgba(128, 202, 128, 0.411)';
+        }
         highLightActivePlayer(sign);
     }
 
@@ -97,6 +104,7 @@ function clearDomBoard(){
     const spaces = document.querySelectorAll('.space')
     spaces.forEach(space =>{
         space.textContent = '';
+        space.style.backgroundColor = 'white';
     })
 }
 

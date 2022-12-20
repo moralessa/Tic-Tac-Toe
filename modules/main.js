@@ -46,12 +46,22 @@ function spaceTaken(space){
     return false;
 }
 
-function checkRoundWinner(){
-    return winningCombinations.some(combo =>{
-        return combo.every(index =>{
-            return gameBoard[index] === playerSign;
-        })
-    })
+function checkRoundWinner(sign){
+    let combo;
+    for(let i = 0; i < winningCombinations.length; i++){
+        let won = true;
+        for(let j = 0; j < winningCombinations[i].length; j++){
+            if(gameBoard[winningCombinations[i][j]] !== sign){
+                won = false;
+                break;
+            }
+        }
+        if(won){
+            combo = winningCombinations[i];
+        }
+    }
+
+    return [combo, sign];
 }
 
 function checkRoundTie(){
@@ -130,13 +140,13 @@ function determineGameWinner(){
     }
 }
 
-function endRound(winner){
+function endRound(winner, combo){
     console.log(winner);
     removeSpaceClickEvent();
     roundCount++;
     updateWins(winner);
     updateDomWins(playerOneWins, playerTwoWins);
-    highLightRoundWinner(winner, selectedPlayers[0], selectedPlayers[1]);
+    highLightRoundWinner(winner, selectedPlayers[0], selectedPlayers[1], combo);
     updateDomRoundCount(roundCount);
     setTimeout(() =>{
         determineGameWinner();
@@ -144,8 +154,8 @@ function endRound(winner){
 }
 
 function updateRoundLogic(){
-    if(checkRoundWinner()){
-        endRound(playerSign);
+    if(checkRoundWinner(playerSign)){
+        endRound(playerSign, checkRoundWinner(playerSign)[0]);
     }else if(checkRoundTie()){
         endRound();
     }else{
@@ -173,6 +183,41 @@ function playerMove(){
     spaces.forEach(space =>{
         space.addEventListener('click', handleClick , {once : true});
     })
+}
+
+function miniMax(board, depth, isMaximizing){
+    let result = checkRoundWinner();
+}
+
+function botMoveImpossible(){
+    let bestScore = -Infinity;
+    let bestMove;
+    for(let i = 0; i < gameBoard.length; i++){
+        if(!spaceTaken(gameBoard[i])){
+            gameBoard[i] = playerSign;
+            let score = miniMax(gameBoard, 0, true);
+            gameBoard[i] = '';
+            if(score > bestScore){
+                bestScore = score;
+                bestMove = i;
+            }
+        }
+    }
+    gameBoard[bestMove] = playerSign;
+    updateDomBoard(bestMove, playerSign);
+    setTimeout(()=>{
+        updateRoundLogic();
+    }, 1000)
+    return true;
+}
+
+function botMoveHard(){
+    let choice = Math.floor(Math.random() * 2);
+    if(choice){
+        botMoveImpossible();
+    }else{
+        botMoveEasy();
+    }
 }
 
 function botMoveEasy(){

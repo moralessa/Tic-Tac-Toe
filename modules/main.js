@@ -46,12 +46,12 @@ function spaceTaken(space){
     return false;
 }
 
-function checkRoundWinner(sign){
+function checkRoundWinner(sign, board){
     let combo;
     for(let i = 0; i < winningCombinations.length; i++){
         let won = true;
         for(let j = 0; j < winningCombinations[i].length; j++){
-            if(gameBoard[winningCombinations[i][j]] !== sign){
+            if(board[winningCombinations[i][j]] !== sign){
                 won = false;
                 break;
             }
@@ -64,10 +64,10 @@ function checkRoundWinner(sign){
     return [combo, sign];
 }
 
-function checkRoundTie(){
+function checkRoundTie(board){
     let full = true;
     for(let i = 0; i < gameBoard.length; i++){
-        if(gameBoard[i] !== 'X' && gameBoard[i] !== 'O'){
+        if(board[i] !== 'X' && board[i] !== 'O'){
             full = false;
             break;
         }
@@ -141,7 +141,6 @@ function determineGameWinner(){
 }
 
 function endRound(winner, combo){
-    console.log(winner);
     removeSpaceClickEvent();
     roundCount++;
     updateWins(winner);
@@ -154,9 +153,9 @@ function endRound(winner, combo){
 }
 
 function updateRoundLogic(){
-    if(checkRoundWinner(playerSign)){
-        endRound(playerSign, checkRoundWinner(playerSign)[0]);
-    }else if(checkRoundTie()){
+    if(checkRoundWinner(playerSign, gameBoard)[0]){
+        endRound(playerSign, checkRoundWinner(playerSign, gameBoard)[0]);
+    }else if(checkRoundTie(gameBoard)){
         endRound();
     }else{
         swapTurn();
@@ -185,8 +184,44 @@ function playerMove(){
     })
 }
 
-function miniMax(board, depth, isMaximizing){
-    let result = checkRoundWinner();
+function miniMax(board, depth, isMaximizing, currentPlayerSign){
+    let opposingPlayerSign;
+    (currentPlayerSign === 'X') ? opposingPlayerSign = 'O' : opposingPlayerSign = 'X';
+    
+    if(checkRoundWinner(currentPlayerSign, board)[0]){
+        return 1;
+    }
+    if(checkRoundWinner(opposingPlayerSign, board)[0]){
+        return -1;
+    }
+
+    if(checkRoundTie(board)){
+        return 0;
+    }
+
+    if(isMaximizing){
+        let bestScore = -Infinity;
+        for(let i = 0; i < board.length; i++){
+            if(!spaceTaken(board[i])){
+                board[i] = currentPlayerSign;
+                let score = miniMax(board, depth + 1, false, currentPlayerSign);
+                board[i] = '';
+                bestScore = Math.max(score, bestScore);
+            }
+        }
+        return bestScore;
+    }else{
+        let bestScore = Infinity;
+        for(let i = 0; i < board.length; i++){
+            if(!spaceTaken(board[i])){
+                board[i] = opposingPlayerSign;
+                let score = miniMax(board, depth + 1, true, currentPlayerSign);
+                board[i] = '';
+                bestScore = Math.min(score, bestScore);
+            }
+        }
+        return bestScore;
+    }
 }
 
 function botMoveImpossible(){
@@ -195,7 +230,7 @@ function botMoveImpossible(){
     for(let i = 0; i < gameBoard.length; i++){
         if(!spaceTaken(gameBoard[i])){
             gameBoard[i] = playerSign;
-            let score = miniMax(gameBoard, 0, true);
+            let score = miniMax(gameBoard, 0, false, playerSign);
             gameBoard[i] = '';
             if(score > bestScore){
                 bestScore = score;

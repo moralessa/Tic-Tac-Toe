@@ -1,3 +1,5 @@
+/* eslint-disable max-len */
+/* eslint-disable no-param-reassign */
 /* eslint-disable import/prefer-default-export */
 /* eslint linebreak-style: ["error", "windows"] */
 function startGameAnimations() {

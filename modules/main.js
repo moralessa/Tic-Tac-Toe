@@ -1,11 +1,12 @@
+/* eslint-disable import/extensions */
 /* eslint-disable no-param-reassign */
 /* eslint-disable no-use-before-define */
 /* eslint-disable no-unused-expressions */
 /* eslint-disable default-case */
 /* eslint-disable no-plusplus */
 /* eslint linebreak-style: ["error", "windows"] */
-import { bootUpGame, startGameAnimations } from './homeScreenDom';
-import { bootLoadScreen } from './loadScreenDom';
+import { bootUpGame, startGameAnimations } from './homeScreenDom.js';
+import { bootLoadScreen } from './loadScreenDom.js';
 import {
   bootPlayScreen,
   updateDomRoundCount,
@@ -17,7 +18,7 @@ import {
   clearDomBoard,
   clearDomStatus,
   resetRoundWinnerHighlight,
-} from './playScreenDom';
+} from './playScreenDom.js';
 
 const startButton = document.getElementById('start');
 const returnButton = document.querySelector('.return');

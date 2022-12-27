@@ -1,141 +1,154 @@
-function bootPlayScreen(players){
-    return new Promise(resolve=>{
-        const playScreen = document.querySelector('.playScreen');
-        const playerOne = document.getElementById('playerOne');
-        const playerTwo = document.getElementById('playerTwo');
-        playScreen.classList.remove('d-none');
-        playScreen.classList.add('animate__bounceIn');
-
-        function formatPlayerText(player){
-            if(player.textContent === 'Player' ) return player.id;
-            return `${player.id} : ${player.textContent.toLowerCase()}`;
-        }
-
-        playerOne.textContent = formatPlayerText(players[0]);
-        playerTwo.textContent = formatPlayerText(players[1]);
-        resolve('finished playScreen animation');
-    })
-}
-
-function highLightActivePlayer(sign){
+/* eslint-disable no-plusplus */
+/* eslint-disable no-restricted-globals */
+/* eslint-disable no-param-reassign */
+/* eslint-disable no-use-before-define */
+/* eslint-disable default-param-last */
+/* eslint linebreak-style: ["error", "windows"] */
+function bootPlayScreen(players) {
+  return new Promise((resolve) => {
+    const playScreen = document.querySelector('.playScreen');
     const playerOne = document.getElementById('playerOne');
     const playerTwo = document.getElementById('playerTwo');
+    playScreen.classList.remove('d-none');
+    playScreen.classList.add('animate__bounceIn');
 
-    if(sign === 'X'){
-        playerOne.classList.add('focus')
-        playerTwo.classList.remove('focus');
-    }else{
-        playerOne.classList.remove('focus')
-        playerTwo.classList.add('focus');
-    }
-}
-
-function updateDomBoard(index, sign){
-    const chosenSpace = document.getElementById(`s${index}`);
-    setTimeout(()=>{
-        chosenSpace.textContent = sign;
-        chosenSpace.style.backgroundColor = 'rgba(128, 202, 128, 0.411)';
-        setTimeout(()=>{
-            chosenSpace.style.backgroundColor = 'white';
-        }, 300)
-    }, 500)
-}
-
-function updateDomRoundCount(count){
-    const roundCount = document.getElementById('roundCount');
-    roundCount.textContent = count;
-}
-
-function updateDomWins(p1, p2){
-    const playerOne = document.getElementById('firstPlayerWins');
-    const playerTwo = document.getElementById('secondPlayerWins');
-    playerOne.textContent = p1;
-    playerTwo.textContent = p2;
-}
-
-function updateDomRoundStatus(player = 'tie'){
-    const roundStatus = document.getElementById('status');
-    if(player === 'tie'){
-        roundStatus.textContent = 'It\'s a tie!';
-    }else if(player === 'new round'){
-        roundStatus.textContent = 'Initiating new round';
-    }else{
-        roundStatus.textContent = `${player.id} wins this round`;
-    }
-}
-
-function clearDomStatus(){
-    const roundStatus = document.getElementById('status');
-    roundStatus.textContent = '';
-}
-
-
-function highLightRoundWinner(sign = 'tie', p1, p2, combo){
-    const spaces = document.querySelectorAll('.space');
-    if(sign === 'tie'){
-        spaces.forEach(space =>{
-            space.style.backgroundColor = 'rgba(128, 202, 128, 0.411)';
-        })
-        resetRoundWinnerHighlight();
-        updateDomRoundStatus();
-        return;
-    }else{
-        for(let i = 0; i < combo.length; i++){
-            spaces[combo[i]].style.backgroundColor = 'rgba(128, 202, 128, 0.411)';
-        }
-        highLightActivePlayer(sign);
+    function formatPlayerText(player) {
+      if (player.textContent === 'Player') return player.id;
+      return `${player.id} : ${player.textContent.toLowerCase()}`;
     }
 
-    if(sign === 'X'){
-        updateDomRoundStatus(p1);
-    }else {
-        updateDomRoundStatus(p2);
-    }
+    playerOne.textContent = formatPlayerText(players[0]);
+    playerTwo.textContent = formatPlayerText(players[1]);
+    resolve('finished playScreen animation');
+  });
 }
 
-function resetRoundWinnerHighlight(){
-    const playerOne = document.getElementById('firstPlayerWins');
-    const playerTwo = document.getElementById('secondPlayerWins');
-    playerOne.classList.remove('focus');
+function highLightActivePlayer(sign) {
+  const playerOne = document.getElementById('playerOne');
+  const playerTwo = document.getElementById('playerTwo');
+
+  if (sign === 'X') {
+    playerOne.classList.add('focus');
     playerTwo.classList.remove('focus');
+  } else {
+    playerOne.classList.remove('focus');
+    playerTwo.classList.add('focus');
+  }
 }
 
-function clearDomBoard(){
-    const spaces = document.querySelectorAll('.space')
-    spaces.forEach(space =>{
-        space.textContent = '';
-        space.style.backgroundColor = 'white';
-    })
+function updateDomBoard(index, sign) {
+  const chosenSpace = document.getElementById(`s${index}`);
+  setTimeout(() => {
+    chosenSpace.textContent = sign;
+    chosenSpace.style.backgroundColor = 'rgba(128, 202, 128, 0.411)';
+    setTimeout(() => {
+      chosenSpace.style.backgroundColor = 'white';
+    }, 300);
+  }, 500);
 }
 
-function endGameDomAnimation(sign, player){
-    const roundStatus = document.getElementById('status');
-    const playerOne = document.getElementById('playerOne');
-    const playerTwo = document.getElementById('playerTwo');
-    const playAgainButton = document.getElementById('again');
-    let crownIcon = document.createElement('i');
-    crownIcon.classList.add('fa-solid', 'fa-crown');
-    crownIcon.style.marginLeft = '20px';
-    if(sign === 'X'){
-        highLightActivePlayer(sign);
-        playerOne.append(crownIcon);
-        roundStatus.textContent = `${player.id} is the winner!`
-    }else if(sign === 'O'){
-        highLightActivePlayer(sign);
-        playerTwo.append(crownIcon);
-        roundStatus.textContent = `${player.id} is the winner!`;
-    }else{
-        roundStatus.textContent = `The Game ended in a tie! 💩`
-    }
-
-    setTimeout(()=>{
-        playAgainButton.style.opacity = 1;
-        playAgainButton.addEventListener('click', ()=>{
-            location.reload();
-        })
-    }, 1000)
+function updateDomRoundCount(count) {
+  const roundCount = document.getElementById('roundCount');
+  roundCount.textContent = count;
 }
 
+function updateDomWins(p1, p2) {
+  const playerOne = document.getElementById('firstPlayerWins');
+  const playerTwo = document.getElementById('secondPlayerWins');
+  playerOne.textContent = p1;
+  playerTwo.textContent = p2;
+}
 
-export{bootPlayScreen, updateDomWins, updateDomRoundCount, highLightActivePlayer, endGameDomAnimation,
-     updateDomBoard, highLightRoundWinner, resetRoundWinnerHighlight, clearDomBoard, clearDomStatus};
+function updateDomRoundStatus(player = 'tie') {
+  const roundStatus = document.getElementById('status');
+  if (player === 'tie') {
+    roundStatus.textContent = "It's a tie!";
+  } else if (player === 'new round') {
+    roundStatus.textContent = 'Initiating new round';
+  } else {
+    roundStatus.textContent = `${player.id} wins this round`;
+  }
+}
+
+function clearDomStatus() {
+  const roundStatus = document.getElementById('status');
+  roundStatus.textContent = '';
+}
+
+function highLightRoundWinner(sign = 'tie', p1, p2, combo) {
+  const spaces = document.querySelectorAll('.space');
+  if (sign === 'tie') {
+    spaces.forEach((space) => {
+      space.style.backgroundColor = 'rgba(128, 202, 128, 0.411)';
+    });
+    resetRoundWinnerHighlight();
+    updateDomRoundStatus();
+    return;
+  }
+  for (let i = 0; i < combo.length; i++) {
+    spaces[combo[i]].style.backgroundColor = 'rgba(128, 202, 128, 0.411)';
+  }
+  highLightActivePlayer(sign);
+
+  if (sign === 'X') {
+    updateDomRoundStatus(p1);
+  } else {
+    updateDomRoundStatus(p2);
+  }
+}
+
+function resetRoundWinnerHighlight() {
+  const playerOne = document.getElementById('firstPlayerWins');
+  const playerTwo = document.getElementById('secondPlayerWins');
+  playerOne.classList.remove('focus');
+  playerTwo.classList.remove('focus');
+}
+
+function clearDomBoard() {
+  const spaces = document.querySelectorAll('.space');
+  spaces.forEach((space) => {
+    space.textContent = '';
+    space.style.backgroundColor = 'white';
+  });
+}
+
+function endGameDomAnimation(sign, player) {
+  const roundStatus = document.getElementById('status');
+  const playerOne = document.getElementById('playerOne');
+  const playerTwo = document.getElementById('playerTwo');
+  const playAgainButton = document.getElementById('again');
+  const crownIcon = document.createElement('i');
+  crownIcon.classList.add('fa-solid', 'fa-crown');
+  crownIcon.style.marginLeft = '20px';
+  if (sign === 'X') {
+    highLightActivePlayer(sign);
+    playerOne.append(crownIcon);
+    roundStatus.textContent = `${player.id} is the winner!`;
+  } else if (sign === 'O') {
+    highLightActivePlayer(sign);
+    playerTwo.append(crownIcon);
+    roundStatus.textContent = `${player.id} is the winner!`;
+  } else {
+    roundStatus.textContent = 'The Game ended in a tie! 💩';
+  }
+
+  setTimeout(() => {
+    playAgainButton.style.opacity = 1;
+    playAgainButton.addEventListener('click', () => {
+      location.reload();
+    });
+  }, 1000);
+}
+
+export {
+  bootPlayScreen,
+  updateDomWins,
+  updateDomRoundCount,
+  highLightActivePlayer,
+  endGameDomAnimation,
+  updateDomBoard,
+  highLightRoundWinner,
+  resetRoundWinnerHighlight,
+  clearDomBoard,
+  clearDomStatus,
+};

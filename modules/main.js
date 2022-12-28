@@ -20,6 +20,7 @@ import {
   resetRoundWinnerHighlight,
 } from './playScreenDom.js';
 
+// Variable declarations for Game Functionality
 const startButton = document.getElementById('start');
 const returnButton = document.querySelector('.return');
 let selectedPlayers;
@@ -40,17 +41,21 @@ const winningCombinations = [
   [2, 4, 6],
 ];
 
+// Simple event listener to reload page when button is click
 returnButton.addEventListener('click', () => {
   // eslint-disable-next-line no-restricted-globals
   location.reload();
 });
 
+// Function that initates the game
 function gameStart() {
   removeSpaceClickEvent();
   playerLogic();
   highLightActivePlayer(playerSign);
 }
 
+// Start button event listener that calls on imported functions to boot corresponding screens
+// and start game functionality. The load screens are implemented using promises
 startButton.addEventListener('click', () => {
   selectedPlayers = startGameAnimations();
   setTimeout(() => {
@@ -64,6 +69,7 @@ startButton.addEventListener('click', () => {
   }, 2000);
 });
 
+// Function to check if a space is taken
 function spaceTaken(space) {
   if (space === 'X' || space === 'O') {
     return true;
@@ -72,6 +78,7 @@ function spaceTaken(space) {
   return false;
 }
 
+// Function to check round winner
 function checkRoundWinner(sign, board) {
   let combo;
   for (let i = 0; i < winningCombinations.length; i++) {
@@ -90,6 +97,7 @@ function checkRoundWinner(sign, board) {
   return [combo, sign];
 }
 
+// Function to check for round tie
 function checkRoundTie(board) {
   let full = true;
   for (let i = 0; i < gameBoard.length; i++) {
@@ -101,6 +109,7 @@ function checkRoundTie(board) {
   return full;
 }
 
+// Function used to swap turns each time a player switches
 function swapTurn() {
   if (playerSign === 'X') {
     playerSign = 'O';
@@ -109,6 +118,7 @@ function swapTurn() {
   }
 }
 
+// Function used to update the game board based on the dom board
 function updateGameBoard() {
   let count = 0;
   spaces.forEach((space) => {
@@ -117,6 +127,7 @@ function updateGameBoard() {
   });
 }
 
+// Function used to updatewins
 function updateWins(winner) {
   if (winner === 'X') {
     playerOneWins++;
@@ -125,6 +136,7 @@ function updateWins(winner) {
   }
 }
 
+// Funciton called to end game
 function endGame(winner = 'tie') {
   clearDomStatus();
   resetRoundWinnerHighlight();
@@ -137,6 +149,7 @@ function endGame(winner = 'tie') {
   }
 }
 
+// Function called to determine game winner based on different cases
 function determineGameWinner() {
   if (roundCount === 5) {
     if (playerOneWins > playerTwoWins) {
@@ -161,6 +174,7 @@ function determineGameWinner() {
   }
 }
 
+// Function used to handle clicks on spaces by each player
 function handleClick(e) {
   const space = e.target;
   if (!spaceTaken(space.textContent)) {
@@ -170,12 +184,14 @@ function handleClick(e) {
   }
 }
 
+// Function used to remove space click event after each player move
 function removeSpaceClickEvent() {
   spaces.forEach((space) => {
     space.removeEventListener('click', handleClick);
   });
 }
 
+// Function used to end the round
 function endRound(winner, combo) {
   removeSpaceClickEvent();
   roundCount++;
@@ -188,6 +204,7 @@ function endRound(winner, combo) {
   }, 1000);
 }
 
+// Function that updates each round logic
 function updateRoundLogic() {
   if (checkRoundWinner(playerSign, gameBoard)[0]) {
     endRound(playerSign, checkRoundWinner(playerSign, gameBoard)[0]);
@@ -199,12 +216,14 @@ function updateRoundLogic() {
   }
 }
 
+// Function used for the player move logic which implements a event listener on the spaces
 function playerMove() {
   spaces.forEach((space) => {
     space.addEventListener('click', handleClick, { once: true });
   });
 }
 
+// Mini max algorithm used to implement the 'impossible' difficulty for the ai
 function miniMax(board, depth, isMaximizing, currentPlayerSign) {
   let opposingPlayerSign;
   currentPlayerSign === 'X'
@@ -246,6 +265,7 @@ function miniMax(board, depth, isMaximizing, currentPlayerSign) {
   return bestScore;
 }
 
+// Easy bot ai that picks a random spot on the board
 function botMoveEasy() {
   let index = Math.floor(Math.random() * gameBoard.length);
   while (spaceTaken(gameBoard[index])) {
@@ -259,6 +279,7 @@ function botMoveEasy() {
   return true;
 }
 
+// Impossible bot ai that uses the recursive function minimax to make the most optimal decision
 function botMoveImpossible() {
   let bestScore = -Infinity;
   let bestMove;
@@ -281,6 +302,7 @@ function botMoveImpossible() {
   return true;
 }
 
+// Hard bot ai that invokes either botMoveEasy or botMoveImpossible based on a random selection
 function botMoveHard() {
   const choice = Math.floor(Math.random() * 2);
   if (choice) {
@@ -290,6 +312,7 @@ function botMoveHard() {
   }
 }
 
+// Function used to calculate the player difficulty
 function calculateDifficulty(player) {
   switch (player.textContent) {
     case 'Easy':
@@ -303,6 +326,7 @@ function calculateDifficulty(player) {
   return 4;
 }
 
+// Function to define the player logic
 function playerLogic() {
   let difficulty;
   if (playerSign === 'X') {
@@ -326,4 +350,5 @@ function playerLogic() {
   }
 }
 
+// Invoked function to boot up the game
 bootUpGame();
